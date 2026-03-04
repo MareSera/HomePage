@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MareSera - HomePage</title>
+    <style>
+        @font-face {
+            font-family: 'KeinannMaruPOP-CN';
+            src: url('./Fonts/KeinannMaruPOP（中文安装这个）.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+            unicode-range: U+4E00-9FFF, U+3400-4DBF, U+20000-2A6DF, U+2A700-2B73F, U+2B740-2B81F, U+2B820-2CEAF, U+F900-FAFF, U+2F800-2FA1F;
+        }
+
+        @font-face {
+            font-family: 'KeinannMaruPOP-JP';
+            src: url('./Fonts/KeinannMaruPOPjp（日文安装这个）.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+            unicode-range: U+3040-309F, U+30A0-30FF, U+31F0-31FF, U+3200-32FF, U+3300-33FF, U+FF00-FFEF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --btn-bg: #2a2a2a;
+            --btn-text: #ffffff;
+            --btn-hover: #000000;
+            --online-color: #10b981;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --border-color: #404040;
+            --btn-bg: #f5f5f5;
+            --btn-text: #1a1a1a;
+            --btn-hover: #ffffff;
+            --online-color: #10b981;
+        }
+
+        body {
+            font-family: 'KeinannMaruPOP-CN', 'KeinannMaruPOP-JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 'Hiragino Kaku Gothic Pro', 'Meiryo', sans-serif;
+            background: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 80px 60px;
+            width: 95vw;
+            max-width: 1200px;
+            height: 90vh;
+            max-height: 800px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+            animation: fadeInScale 0.8s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .card-header {
+            position: absolute;
+            top: 32px;
+            right: 40px;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 3px;
+            animation: fadeInRight 0.6s ease-out 0.3s both;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .card-header.shake {
+            animation: shake 0.8s ease-in-out;
+        }
+
+        .card-header.hidden {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .card-header.show {
+            opacity: 1;
+            transform: translateX(0);
+            transition: all 0.8s ease-out;
+        }
+
+        .card-header.shake {
+            animation: shake 0.8s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            30% {
+                opacity: 1;
+                transform: translateX(-10px);
+            }
+            50% {
+                transform: translateX(5px);
+            }
+            70% {
+                transform: translateX(-3px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 32px;
+            left: 40px;
+            width: 48px;
+            height: 48px;
+            border: 2px solid var(--text-primary);
+            border-radius: 50%;
+            background: var(--card-bg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            animation: fadeInLeft 0.6s ease-out 0.3s both;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--text-primary);
+            transform: rotate(180deg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .theme-toggle svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: var(--text-primary);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .avatar-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 48px;
+            position: relative;
+            animation: fadeInDown 0.8s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .avatar-frame {
+            position: relative;
+            padding: 8px;
+            border: 2px dashed var(--text-secondary);
+            border-radius: 50%;
+            background: var(--card-bg);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-frame:hover {
+            transform: scale(1.05);
+        }
+
+        .avatar-frame.spin {
+            animation: bounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--card-bg);
+            display: block;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 20px;
+            height: 20px;
+            background: var(--online-color);
+            border-radius: 50%;
+            border: 3px solid var(--card-bg);
+            box-shadow: 0 0 0 2px var(--text-secondary);
+        }
+
+        .intro-text {
+            text-align: center;
+            margin-bottom: 60px;
+            line-height: 2;
+            color: var(--text-primary);
+        }
+
+        .intro-text p {
+            margin-bottom: 16px;
+            font-size: 18px;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .intro-text .greeting {
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--text-primary);
+            animation-delay: 0.7s;
+        }
+
+        .intro-text p:nth-child(2) {
+            animation-delay: 0.9s;
+        }
+
+        .intro-text .motto {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 16px;
+            animation-delay: 1.1s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .nav-btn {
+            padding: 24px 32px;
+            border: 2px solid var(--text-primary);
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            animation: fadeInUp 0.6s ease-out both;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn-icon {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-btn-text {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-btn:nth-child(1) {
+            animation-delay: 1.3s;
+        }
+
+        .nav-btn:nth-child(2) {
+            animation-delay: 1.4s;
+        }
+
+        .nav-btn:nth-child(3) {
+            animation-delay: 1.5s;
+        }
+
+        .nav-btn:nth-child(4) {
+            animation-delay: 1.6s;
+        }
+
+        .nav-buttons:hover .nav-btn:not(:hover) {
+            opacity: 0.3;
+            filter: blur(2px);
+            transform: scale(0.95);
+        }
+
+        .nav-btn:hover {
+            background: var(--text-primary);
+            color: var(--card-bg);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            border-color: var(--text-primary);
+        }
+
+        .nav-btn:hover .nav-btn-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 60px 40px;
+                height: 95vh;
+            }
+
+            .nav-buttons {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .nav-btn {
+                padding: 20px 24px;
+                gap: 6px;
+            }
+
+            .nav-btn-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            .nav-btn-text {
+                font-size: 13px;
+            }
+
+            .intro-text p {
+                font-size: 16px;
+            }
+
+            .intro-text .greeting {
+                font-size: 20px;
+            }
+
+            .avatar {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 40px 24px;
+            }
+
+            .card-header {
+                top: 20px;
+                right: 24px;
+                font-size: 20px;
+            }
+
+            .theme-toggle {
+                top: 20px;
+                left: 24px;
+                width: 36px;
+                height: 36px;
+            }
+
+            .nav-btn {
+                padding: 16px 20px;
+                gap: 4px;
+            }
+
+            .nav-btn-icon {
+                width: 18px;
+                height: 18px;
+            }
+
+            .nav-btn-text {
+                font-size: 12px;
+            }
+
+            .intro-text p {
+                font-size: 14px;
+            }
+
+            .intro-text .greeting {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <svg id="sunIcon" viewBox="0 0 24 24" style="display: block;">
+                <circle cx="12" cy="12" r="4"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <svg id="moonIcon" viewBox="0 0 24 24" style="display: none;">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+        </button>
+
+        <div class="card-header" id="cardHeader">HomePage</div>
+        
+        <div class="avatar-container">
+            <div class="avatar-frame" id="avatarFrame">
+                <img src="./profile.png" alt="MareSera Avatar" class="avatar">
+                <div class="online-indicator"></div>
+            </div>
+        </div>
+
+        <div class="intro-text">
+            <p class="greeting">Hi, 这里是 MareSera，你可以叫我汐落</p>
+            <p>很高兴认识你，这里仍在开发阶段，欢迎到处逛逛</p>
+            <p class="motto">I aspire to be a maverick, harnessing technology to reshape the world.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="./" class="nav-btn">
+                <svg class="nav-btn-icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9,22 9,12 15,12 15,22"/>
+                </svg>
+                <span class="nav-btn-text">首页</span>
+            </a>
+            <a href="https://blog.maresera.top/" class="nav-btn">
+                <svg class="nav-btn-icon" viewBox="0 0 24 24">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+                <span class="nav-btn-text">博客</span>
+            </a>
+            <a href="/project" class="nav-btn">
+                <svg class="nav-btn-icon" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span class="nav-btn-text">项目</span>
+            </a>
+            <a href="https://blog.maresera.top/wip?progress=10" class="nav-btn">
+                <svg class="nav-btn-icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                    <path d="M12 17h.01"/>
+                </svg>
+                <span class="nav-btn-text">探索</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const html = document.documentElement;
+        const avatarFrame = document.getElementById('avatarFrame');
+        const cardHeader = document.getElementById('cardHeader');
+
+        // 检查本地存储的主题设置
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', currentTheme);
+        updateIcon(currentTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const theme = html.getAttribute('data-theme');
+            const newTheme = theme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcon(newTheme);
+        });
+
+        function updateIcon(theme) {
+            if (theme === 'dark') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        }
+
+        // HomePage 点击彩蛋
+        let isHomePageAnimating = false;
+
+        cardHeader.addEventListener('click', () => {
+            // 如果正在动画中，忽略点击
+            if (isHomePageAnimating) return;
+
+            // 设置动画状态
+            isHomePageAnimating = true;
+
+            // 抖动动画
+            cardHeader.classList.add('shake');
+            
+            // 0.8秒后隐藏
+            setTimeout(() => {
+                cardHeader.classList.remove('shake');
+                cardHeader.classList.add('hidden');
+                
+                // 3秒后逐渐显示
+                setTimeout(() => {
+                    cardHeader.classList.remove('hidden');
+                    cardHeader.classList.add('show');
+                    
+                    // 显示动画完成后重置状态
+                    setTimeout(() => {
+                        cardHeader.classList.remove('show');
+                        isHomePageAnimating = false;
+                    }, 800);
+                }, 3000);
+            }, 800);
+        });
+
+        // 头像点击彩蛋
+        const messages = [
+            "Hi! 很高兴见到你 👋",
+            "你发现了一个小秘密 ✨\n继续探索吧，还有更多惊喜 🎉",
+            "感谢你的访问 💖",
+            "要不要一起喝杯咖啡？ ☕"
+        ];
+
+        let clickCount = 0;
+        let currentMessage = null;
+        let messageTimeout = null;
+
+        avatarFrame.addEventListener('click', () => {
+            // Q弹回弹动画
+            avatarFrame.classList.add('spin');
+            setTimeout(() => {
+                avatarFrame.classList.remove('spin');
+            }, 400);
+
+            // 移除上一个弹窗
+            if (currentMessage) {
+                currentMessage.remove();
+                currentMessage = null;
+            }
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+            }
+
+            // 显示随机消息
+            clickCount++;
+            const message = messages[clickCount % messages.length];
+            
+            // 创建消息元素
+            const messageEl = document.createElement('div');
+            messageEl.innerHTML = message.replace(/\n/g, '<br>');
+            messageEl.style.cssText = `
+                position: fixed;
+                top: 24px;
+                right: 24px;
+                background: var(--text-primary);
+                color: var(--card-bg);
+                padding: 16px 24px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 500;
+                z-index: 1000;
+                animation: slideInFromRight 2.5s ease-out forwards;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+                max-width: 300px;
+                line-height: 1.6;
+            `;
+
+            document.body.appendChild(messageEl);
+            currentMessage = messageEl;
+
+            // 2.5秒后移除消息
+            messageTimeout = setTimeout(() => {
+                if (messageEl.parentNode) {
+                    messageEl.remove();
+                }
+                currentMessage = null;
+            }, 2500);
+        });
+
+        // 添加消息弹出动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInFromRight {
+                0% {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+                10% {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                90% {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
