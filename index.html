@@ -27,6 +27,49 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            cursor: none !important;
+        }
+
+        .pointer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .pointer div {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-width: 2.5px;
+            border-color: var(--text-primary);
+        }
+
+        .pointer div:nth-child(1) {
+            top: 0; left: 0;
+            border-top-style: solid;
+            border-left-style: solid;
+        }
+
+        .pointer div:nth-child(2) {
+            top: 0; right: 0;
+            border-top-style: solid;
+            border-right-style: solid;
+        }
+
+        .pointer div:nth-child(3) {
+            bottom: 0; left: 0;
+            border-bottom-style: solid;
+            border-left-style: solid;
+        }
+
+        .pointer div:nth-child(4) {
+            bottom: 0; right: 0;
+            border-bottom-style: solid;
+            border-right-style: solid;
         }
 
         :root {
@@ -114,40 +157,6 @@
                 opacity: 1;
                 transform: scale(1);
             }
-        }
-
-        .card-header {
-            position: fixed;
-            top: 32px;
-            right: 40px;
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: 3px;
-            animation: fadeInRight 0.6s ease-out 0.3s both;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            user-select: none;
-            z-index: 10;
-        }
-
-        .card-header.shake {
-            animation: shake 0.8s ease-in-out;
-        }
-
-        .card-header.hidden {
-            opacity: 0;
-            transform: translateX(20px);
-        }
-
-        .card-header.show {
-            opacity: 1;
-            transform: translateX(0);
-            transition: all 0.8s ease-out;
-        }
-
-        .card-header.shake {
-            animation: shake 0.8s ease-in-out;
         }
 
         @keyframes shake {
@@ -488,12 +497,6 @@
                 padding: 40px 24px;
             }
 
-            .card-header {
-                top: 20px;
-                right: 24px;
-                font-size: 20px;
-            }
-
             .theme-toggle {
                 top: 20px;
                 left: 24px;
@@ -526,27 +529,25 @@
     </style>
 </head>
 <body>
+    <div class="pointer"><div></div><div></div><div></div><div></div></div>
     <a-waves><svg></svg></a-waves>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg id="sunIcon" viewBox="0 0 24 24" style="display: block;">
+            <circle cx="12" cy="12" r="4"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="moonIcon" viewBox="0 0 24 24" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+    </button>
     <div class="card">
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-            <svg id="sunIcon" viewBox="0 0 24 24" style="display: block;">
-                <circle cx="12" cy="12" r="4"/>
-                <line x1="12" y1="1" x2="12" y2="3"/>
-                <line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/>
-                <line x1="21" y1="12" x2="23" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-            <svg id="moonIcon" viewBox="0 0 24 24" style="display: none;">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-        </button>
-
-        <div class="card-header" id="cardHeader">HomePage</div>
-        
         <div class="avatar-container">
             <div class="avatar-frame" id="avatarFrame">
                 <img src="./profile.png" alt="MareSera Avatar" class="avatar">
@@ -705,12 +706,72 @@
             }
         }
         customElements.define('a-waves', AWaves)
+
+        // Magnetic pointer
+        const pointer = {
+            container: document.querySelector('.pointer'),
+            current_target: null,
+            mouse: { x: 0, y: 0 },
+            cur: { x: 0, y: 0, w: 40, h: 40 },
+            target: { w: 40, h: 40 },
+            init() {
+                window.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX
+                    this.mouse.y = e.clientY
+                })
+                document.addEventListener('mouseleave', () => { this.container.style.opacity = '0' })
+                document.addEventListener('mouseenter', () => { this.container.style.opacity = '1' })
+                this.bind_targets()
+                requestAnimationFrame(this.tick.bind(this))
+            },
+            tick() {
+                const posSpeed = 0.13
+                const sizeSpeed = 0.07
+
+                let tx = this.mouse.x
+                let ty = this.mouse.y
+                if (this.current_target) {
+                    const rect = this.current_target.getBoundingClientRect()
+                    const cx = rect.left + rect.width / 2
+                    const cy = rect.top + rect.height / 2
+                    tx = cx + (this.mouse.x - cx) * 0.15
+                    ty = cy + (this.mouse.y - cy) * 0.15
+                }
+
+                this.cur.x += (tx - this.cur.x) * posSpeed
+                this.cur.y += (ty - this.cur.y) * posSpeed
+                this.cur.w += (this.target.w - this.cur.w) * sizeSpeed
+                this.cur.h += (this.target.h - this.cur.h) * sizeSpeed
+
+                this.container.style.width = this.cur.w + 'px'
+                this.container.style.height = this.cur.h + 'px'
+                this.container.style.transform = `translate(${this.cur.x - this.cur.w / 2}px, ${this.cur.y - this.cur.h / 2}px)`
+
+                requestAnimationFrame(this.tick.bind(this))
+            },
+            bind_targets() {
+                const pad = 32
+                document.querySelectorAll('a, button, .avatar-frame, .nav-btn').forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        this.current_target = el
+                        const rect = el.getBoundingClientRect()
+                        this.target.w = rect.width + pad
+                        this.target.h = rect.height + pad
+                    })
+                    el.addEventListener('mouseleave', () => {
+                        this.current_target = null
+                        this.target.w = 40
+                        this.target.h = 40
+                    })
+                })
+            }
+        }
+        pointer.init()
         const themeToggle = document.getElementById('themeToggle');
         const sunIcon = document.getElementById('sunIcon');
         const moonIcon = document.getElementById('moonIcon');
         const html = document.documentElement;
         const avatarFrame = document.getElementById('avatarFrame');
-        const cardHeader = document.getElementById('cardHeader');
 
         // 检查本地存储的主题设置
         const currentTheme = localStorage.getItem('theme') || 'light';
@@ -736,37 +797,6 @@
         }
 
         // HomePage 点击彩蛋
-        let isHomePageAnimating = false;
-
-        cardHeader.addEventListener('click', () => {
-            // 如果正在动画中，忽略点击
-            if (isHomePageAnimating) return;
-
-            // 设置动画状态
-            isHomePageAnimating = true;
-
-            // 抖动动画
-            cardHeader.classList.add('shake');
-            
-            // 0.8秒后隐藏
-            setTimeout(() => {
-                cardHeader.classList.remove('shake');
-                cardHeader.classList.add('hidden');
-                
-                // 3秒后逐渐显示
-                setTimeout(() => {
-                    cardHeader.classList.remove('hidden');
-                    cardHeader.classList.add('show');
-                    
-                    // 显示动画完成后重置状态
-                    setTimeout(() => {
-                        cardHeader.classList.remove('show');
-                        isHomePageAnimating = false;
-                    }, 800);
-                }, 3000);
-            }, 800);
-        });
-
         // 头像点击彩蛋
         const messages = [
             "Hi! 很高兴见到你 👋",
