@@ -99,12 +99,229 @@
         body {
             font-family: 'KeinannMaruPOP-CN', 'KeinannMaruPOP-JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 'Hiragino Kaku Gothic Pro', 'Meiryo', sans-serif;
             background: var(--bg-color);
+            transition: background 0.3s ease;
+            overflow-x: hidden;
+            user-select: none;
+        }
+        html { scrollbar-width: none; }
+        html::-webkit-scrollbar { display: none; }
+        body::-webkit-scrollbar { display: none; }
+
+        /* View Transition 圆形扩散 */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+        ::view-transition-old(root) {
+            z-index: 1;
+        }
+        ::view-transition-new(root) {
+            z-index: 2;
+        }
+
+        /* 内容区元素入场缓动 */
+        .about-card,
+        .tech-card,
+        .projects-grid,
+        .section-label {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .about-card.visible,
+        .tech-card.visible,
+        .projects-grid.visible,
+        .section-label.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Page wrapper ── */
+        #page-home {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            transition: background 0.3s ease;
+            position: relative;
+        }
+
+        /* ── Scroll hint ── */
+        .scroll-hint {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            letter-spacing: 2px;
+            animation: hintBounce 2s ease-in-out infinite;
+            z-index: 2;
+            transition: opacity 0.4s ease;
+        }
+        .scroll-hint svg {
+            width: 20px; height: 20px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+        @keyframes hintBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+            50% { transform: translateX(-50%) translateY(8px); opacity: 1; }
+        }
+
+        /* ── Marquee divider ── */
+        .marquee-wrap {
+            overflow: hidden;
+            width: 100%;
+            padding: 24px 0;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .marquee-track {
+            display: flex;
+            white-space: nowrap;
+            will-change: transform;
+        }
+        .marquee-track span {
+            flex-shrink: 0;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            opacity: 0.15;
+            padding-right: 2rem;
+            font-family: 'KeinannMaruPOP-CN', monospace;
+            user-select: none;
+        }
+
+        /* ── Content sections ── */
+        #page-content {
+            background: var(--bg-color);
+            padding: 80px 5vw;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+
+        /* ── About card ── */
+        .about-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 48px;
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+        }
+        .about-field label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .about-field .value {
+            font-size: 18px;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .about-field.full { grid-column: 1 / -1; }
+
+        /* ── Tech stack card ── */
+        .tech-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 48px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .tech-card-title {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        #physics-canvas {
+            width: 100%;
+            height: 320px;
+            display: block;
+        }
+
+        /* ── Projects waterfall ── */
+        .projects-grid {
+            columns: 3;
+            column-gap: 24px;
+            margin-bottom: 80px;
+        }
+        @media (max-width: 900px) { .projects-grid { columns: 2; } }
+        @media (max-width: 560px) { .projects-grid { columns: 1; } }
+
+        .project-card {
+            break-inside: avoid;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .project-card:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+        }
+        .project-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            background: var(--border-color);
+            display: block;
+        }
+        .project-thumb-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, var(--border-color) 0%, var(--text-secondary) 100%);
+            opacity: 0.3;
+        }
+        .project-info {
+            padding: 20px 24px;
+        }
+        .project-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .project-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+        .project-date {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            opacity: 0.6;
         }
 
         .card {
@@ -121,9 +338,14 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: opacity 0.6s ease, transform 0.6s ease;
             animation: fadeInScale 0.8s ease-out;
             z-index: 1;
+        }
+        .card.hidden-up {
+            opacity: 0;
+            transform: scale(0.94) translateY(-40px);
+            pointer-events: none;
         }
 
         a-waves {
@@ -210,8 +432,10 @@
 
         .theme-toggle {
             position: fixed;
-            top: 32px;
-            left: 40px;
+            bottom: 32px;
+            right: 40px;
+            top: auto;
+            left: auto;
             width: 48px;
             height: 48px;
             border: 2px solid var(--text-primary);
@@ -498,8 +722,8 @@
             }
 
             .theme-toggle {
-                top: 20px;
-                left: 24px;
+                bottom: 20px;
+                right: 24px;
                 width: 40px;
                 height: 40px;
             }
@@ -547,49 +771,126 @@
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
     </button>
-    <div class="card">
-        <div class="avatar-container">
-            <div class="avatar-frame" id="avatarFrame">
-                <img src="./profile.png" alt="MareSera Avatar" class="avatar">
-                <div class="online-indicator"></div>
+    <div id="page-home">
+        <div class="card" id="mainCard">
+            <div class="avatar-container">
+                <div class="avatar-frame" id="avatarFrame">
+                    <img src="./profile.png" alt="MareSera Avatar" class="avatar">
+                    <div class="online-indicator"></div>
+                </div>
+            </div>
+
+            <div class="intro-text">
+                <p class="greeting">Hi，我是 MareSera，你也可以叫我 汐落</p>
+                <p>很高兴见到你，不过现在这里仍在开发阶段，欢迎到我的博客逛逛</p>
+                <p class="motto">他人と同じ考え、同じ行動をしてはならない</p>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="./" class="nav-btn">
+                    <svg class="nav-btn-icon" viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9,22 9,12 15,12 15,22"/>
+                    </svg>
+                    <span class="nav-btn-text">首页</span>
+                </a>
+                <a href="https://blog.maresera.top/" class="nav-btn">
+                    <svg class="nav-btn-icon" viewBox="0 0 24 24">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    <span class="nav-btn-text">博客</span>
+                </a>
+                <a href="https://blog.maresera.top/wip?progress=50" class="nav-btn">
+                    <svg class="nav-btn-icon" viewBox="0 0 24 24">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span class="nav-btn-text">项目</span>
+                </a>
+                <a href="https://poems.maresera.top/" class="nav-btn">
+                    <svg class="nav-btn-icon" viewBox="0 0 24 24">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    <span class="nav-btn-text">诗集</span>
+                </a>
             </div>
         </div>
 
-        <div class="intro-text">
-            <p class="greeting">Hi，我是 MareSera，你也可以叫我 汐落</p>
-            <p>很高兴见到你，不过现在这里仍在开发阶段，欢迎到我的博客逛逛</p>
-            <p class="motto">他人と同じ考え、同じ行動をしてはならない</p>
+        <div class="scroll-hint" id="scrollHint">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            <span>SCROLL</span>
+        </div>
+    </div>
+
+    <!-- Marquee divider -->
+    <div class="marquee-wrap">
+        <div class="marquee-track" id="marqueeTrack">
+            <span>CREATING // DESIGNING&nbsp;&nbsp;</span>
+            <span>CREATING // DESIGNING&nbsp;&nbsp;</span>
+            <span>CREATING // DESIGNING&nbsp;&nbsp;</span>
+            <span>CREATING // DESIGNING&nbsp;&nbsp;</span>
+            <span>CREATING // DESIGNING&nbsp;&nbsp;</span>
+            <span>CREATING // DESIGNING&nbsp;&nbsp;</span>
+        </div>
+    </div>
+
+    <!-- Content sections -->
+    <div id="page-content">
+
+        <!-- About -->
+        <p class="section-label">— About</p>
+        <div class="about-card">
+            <div class="about-field">
+                <label>Name</label>
+                <div class="value">MareSera / 汐落</div>
+            </div>
+            <div class="about-field">
+                <label>Studying</label>
+                <div class="value">Pyhhon / 前端的一切</div>
+            </div>
+            <div class="about-field full">
+                <label>Desc</label>
+                <div class="value">热爱创造与设计，喜欢把想法变成可以运行的东西。目前在探索 Web 开发、UI/UX 设计和各种有趣的技术方向。相信好的代码和好的设计一样，都需要反复打磨。</div>
+            </div>
         </div>
 
-        <div class="nav-buttons">
-            <a href="./" class="nav-btn">
-                <svg class="nav-btn-icon" viewBox="0 0 24 24">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9,22 9,12 15,12 15,22"/>
-                </svg>
-                <span class="nav-btn-text">首页</span>
-            </a>
-            <a href="https://blog.maresera.top/" class="nav-btn">
-                <svg class="nav-btn-icon" viewBox="0 0 24 24">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                </svg>
-                <span class="nav-btn-text">博客</span>
-            </a>
-            <a href="https://blog.maresera.top/wip?progress=50" class="nav-btn">
-                <svg class="nav-btn-icon" viewBox="0 0 24 24">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span class="nav-btn-text">项目</span>
-            </a>
-            <a href="https://poems.maresera.top/" class="nav-btn">
-                <svg class="nav-btn-icon" viewBox="0 0 24 24">
-                    <path d="M12 20h9"/>
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                </svg>
-                <span class="nav-btn-text">诗集</span>
-            </a>
+        <!-- Tech stack -->
+        <p class="section-label">— Tech Stack</p>
+        <div class="tech-card">
+            <div class="tech-card-title">拖动它们</div>
+            <canvas id="physics-canvas"></canvas>
         </div>
+
+        <!-- Projects -->
+        <p class="section-label">— Projects</p>
+        <div class="projects-grid" id="projectsGrid">
+            <div class="project-card">
+                <img src="./img/blog.png" alt="Blog" class="project-thumb">
+                <div class="project-info">
+                    <div class="project-name">MareSera Blog</div>
+                    <div class="project-desc">基于 Astro 搭建的个人博客，记录技术探索与日常思考。</div>
+                    <div class="project-date">2024 · 01</div>
+                </div>
+            </div>
+            <div class="project-card">
+                <img src="./img/shiji.png" alt="Blog" class="project-thumb">
+                <div class="project-info">
+                    <div class="project-name">诗集</div>
+                    <div class="project-desc">收录个人创作的诗歌与文字，一个安静的角落。</div>
+                    <div class="project-date">2024 · 06</div>
+                </div>
+            </div>
+            <div class="project-card">
+                <img src="./img/homepage.png" alt="Blog" class="project-thumb">
+                <div class="project-info">
+                    <div class="project-name">HomePage</div>
+                    <div class="project-desc">你现在正在看的这个页面，持续迭代中。</div>
+                    <div class="project-date">2025 · 03</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -641,8 +942,8 @@
                 }
             }
             updateMousePosition(x, y) {
-                this.mouse.x = x - this.bounding.left
-                this.mouse.y = y - this.bounding.top + window.scrollY
+                this.mouse.x = x - this.bounding.left - window.scrollX
+                this.mouse.y = y - this.bounding.top - window.scrollY
             }
             movePoints() {
                 const { lines, mouse } = this
@@ -731,11 +1032,15 @@
                 let tx = this.mouse.x
                 let ty = this.mouse.y
                 if (this.current_target) {
+                    // 每帧重新取 rect，避免滚动后位置偏移
                     const rect = this.current_target.getBoundingClientRect()
                     const cx = rect.left + rect.width / 2
                     const cy = rect.top + rect.height / 2
                     tx = cx + (this.mouse.x - cx) * 0.15
                     ty = cy + (this.mouse.y - cy) * 0.15
+                    // 同步目标尺寸（元素可能因滚动/resize改变）
+                    this.target.w = rect.width + 32
+                    this.target.h = rect.height + 32
                 }
 
                 this.cur.x += (tx - this.cur.x) * posSpeed
@@ -749,24 +1054,371 @@
 
                 requestAnimationFrame(this.tick.bind(this))
             },
+            setTarget(el) {
+                this.current_target = el
+                if (el) {
+                    const rect = el.getBoundingClientRect()
+                    this.target.w = rect.width + 32
+                    this.target.h = rect.height + 32
+                } else {
+                    this.target.w = 40
+                    this.target.h = 40
+                }
+            },
             bind_targets() {
-                const pad = 32
                 document.querySelectorAll('a, button, .avatar-frame, .nav-btn').forEach(el => {
-                    el.addEventListener('mouseenter', () => {
-                        this.current_target = el
-                        const rect = el.getBoundingClientRect()
-                        this.target.w = rect.width + pad
-                        this.target.h = rect.height + pad
-                    })
-                    el.addEventListener('mouseleave', () => {
-                        this.current_target = null
-                        this.target.w = 40
-                        this.target.h = 40
-                    })
+                    el.addEventListener('mouseenter', () => this.setTarget(el))
+                    el.addEventListener('mouseleave', () => this.setTarget(null))
                 })
             }
         }
         pointer.init()
+        // ── Scroll snap: card hide/show ──
+        const mainCard = document.getElementById('mainCard')
+        const scrollHint = document.getElementById('scrollHint')
+        const pageHome = document.getElementById('page-home')
+        let scrollLocked = false
+        let rafScroll = null
+
+        // snap 目标：page-home 的实际底部
+        function snapDownTarget() {
+            return pageHome.getBoundingClientRect().bottom + window.scrollY
+        }
+
+        // ── 全局平滑滚动 ──
+        let scrollTarget = window.scrollY
+        let scrollCurrent = window.scrollY
+        let scrollRaf = null
+
+        function startScrollLoop() {
+            if (scrollRaf) return
+            function loop() {
+                const diff = scrollTarget - scrollCurrent
+                if (Math.abs(diff) < 0.5) {
+                    scrollCurrent = scrollTarget
+                    window.scrollTo(0, scrollCurrent)
+                    scrollRaf = null
+                    scrollLocked = false
+                    return
+                }
+                scrollCurrent += diff * 0.06
+                window.scrollTo(0, scrollCurrent)
+                scrollRaf = requestAnimationFrame(loop)
+            }
+            scrollRaf = requestAnimationFrame(loop)
+        }
+
+        // snap 专用
+        function snapTo(targetY) {
+            if (scrollRaf) cancelAnimationFrame(scrollRaf)
+            scrollRaf = null
+            scrollTarget = Math.max(0, targetY)
+            scrollCurrent = window.scrollY
+            // snap 到顶部时用更快的 lerp，避免 locked 时间过长
+            const isToTop = targetY === 0
+            scrollLocked = true
+            function loop() {
+                const diff = scrollTarget - scrollCurrent
+                if (Math.abs(diff) < 0.5) {
+                    scrollCurrent = scrollTarget
+                    window.scrollTo(0, scrollCurrent)
+                    scrollRaf = null
+                    scrollLocked = false
+                    return
+                }
+                scrollCurrent += diff * (isToTop ? 0.12 : 0.08)
+                window.scrollTo(0, scrollCurrent)
+                scrollRaf = requestAnimationFrame(loop)
+            }
+            scrollRaf = requestAnimationFrame(loop)
+        }
+
+        function onScroll() {
+            const sy = window.scrollY
+            const vh = window.innerHeight
+            if (sy > vh * 0.25) {
+                mainCard.classList.add('hidden-up')
+                scrollHint.style.opacity = '0'
+                scrollHint.style.pointerEvents = 'none'
+                scrollHint.style.animation = 'none'
+            } else {
+                mainCard.classList.remove('hidden-up')
+                scrollHint.style.opacity = ''
+                scrollHint.style.pointerEvents = ''
+                scrollHint.style.animation = ''
+            }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true })
+
+        window.addEventListener('wheel', (e) => {
+            const sy = window.scrollY
+            const snapDown = snapDownTarget()
+            const vh = window.innerHeight
+
+            // 首屏 snap 向下
+            if (sy < snapDown - vh * 0.5 && e.deltaY > 20 && !scrollLocked) {
+                snapTo(snapDown)
+                return
+            }
+            // 内容区顶部 snap 向上
+            if (sy > snapDown - vh * 0.3 && sy < snapDown + vh * 0.3 && e.deltaY < -20 && !scrollLocked) {
+                scrollTarget = 0
+                snapTo(0)
+                return
+            }
+        }, { passive: true })
+
+        // ── Marquee ──
+        const marqueeTrack = document.getElementById('marqueeTrack')
+        let marqueeX = 0
+        const marqueeSpeed = 0.6
+        ;(function tickMarquee() {
+            marqueeX -= marqueeSpeed
+            const totalW = marqueeTrack.children[0].offsetWidth
+            if (Math.abs(marqueeX) >= totalW) marqueeX = 0
+            marqueeTrack.style.transform = `translateX(${marqueeX}px)`
+            requestAnimationFrame(tickMarquee)
+        })()
+
+        // ── Physics tech chips (canvas) ──
+        ;(function() {
+            const techList = ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'Vue', 'React',
+                              'Node.js', 'Python', 'Git', 'Figma', 'Tailwind', 'Vite']
+            const cvs = document.getElementById('physics-canvas')
+            const ctx = cvs.getContext('2d')
+
+            const FONT_SIZE = 42
+            const gravity = 0.5, friction = 0.85, bounce = 0.62
+
+            function cssVar(name) {
+                return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+            }
+
+            let chips = []
+            let dragging = null  // 同一时刻只拖一个，避免多点混乱
+
+            function resize() {
+                // 用 canvas 自身的 getBoundingClientRect，而不是父元素
+                const rect = cvs.getBoundingClientRect()
+                cvs.width = rect.width
+                cvs.height = rect.height || 320
+            }
+
+            function initChips() {
+                ctx.font = `300 ${FONT_SIZE}px KeinannMaruPOP-CN, sans-serif`
+                chips = techList.map(name => {
+                    const w = ctx.measureText(name).width
+                    const h = FONT_SIZE
+                    return {
+                        name, w, h,
+                        x: Math.random() * Math.max(10, cvs.width - w - 10) + 5,
+                        y: Math.random() * (cvs.height * 0.35),
+                        vx: (Math.random() - 0.5) * 4,
+                        vy: Math.random() * 2,
+                        dragOx: 0, dragOy: 0
+                    }
+                })
+            }
+
+            let hovered = null
+
+            function drawChip(c) {
+                const isHovered = c === hovered
+                const color = cssVar('--text-primary')
+
+                ctx.font = `${isHovered ? '400' : '300'} ${FONT_SIZE}px KeinannMaruPOP-CN, sans-serif`
+                ctx.textBaseline = 'top'
+
+                // hover 时淡色背景光晕
+                if (isHovered) {
+                    const pad = 8
+                    ctx.fillStyle = `rgba(128,128,128,0.07)`
+                    const r = 6
+                    const bx = c.x - pad, by = c.y - pad
+                    const bw = c.w + pad * 2, bh = c.h + pad * 2
+                    ctx.beginPath()
+                    ctx.moveTo(bx + r, by)
+                    ctx.lineTo(bx + bw - r, by)
+                    ctx.arcTo(bx + bw, by, bx + bw, by + r, r)
+                    ctx.lineTo(bx + bw, by + bh - r)
+                    ctx.arcTo(bx + bw, by + bh, bx + bw - r, by + bh, r)
+                    ctx.lineTo(bx + r, by + bh)
+                    ctx.arcTo(bx, by + bh, bx, by + bh - r, r)
+                    ctx.lineTo(bx, by + r)
+                    ctx.arcTo(bx, by, bx + r, by, r)
+                    ctx.closePath()
+                    ctx.fill()
+                }
+
+                ctx.fillStyle = color
+                ctx.globalAlpha = isHovered ? 0.9 : 0.6
+                ctx.fillText(c.name, c.x, c.y)
+                ctx.globalAlpha = 1
+
+                // hover 下划线
+                if (isHovered) {
+                    ctx.strokeStyle = color
+                    ctx.globalAlpha = 0.4
+                    ctx.lineWidth = 1.5
+                    ctx.beginPath()
+                    ctx.moveTo(c.x, c.y + c.h + 3)
+                    ctx.lineTo(c.x + c.w, c.y + c.h + 3)
+                    ctx.stroke()
+                    ctx.globalAlpha = 1
+                }
+            }
+
+            function tick() {
+                ctx.clearRect(0, 0, cvs.width, cvs.height)
+                const W = cvs.width, H = cvs.height
+
+                chips.forEach(c => {
+                    if (c !== dragging) {
+                        c.vy += gravity
+                        c.vx *= friction
+                        c.x += c.vx
+                        c.y += c.vy
+
+                        if (c.y + c.h >= H) {
+                            c.y = H - c.h
+                            c.vy *= -bounce
+                            if (Math.abs(c.vy) < 1.5) c.vy = 0
+                        }
+                        if (c.x < 0) { c.x = 0; c.vx *= -bounce }
+                        if (c.x + c.w > W) { c.x = W - c.w; c.vx *= -bounce }
+
+                        // AABB collision — 只对非拖拽的 chip 做碰撞
+                        chips.forEach(o => {
+                            if (o === c || o === dragging) return
+                            const ox = (c.x + c.w / 2) - (o.x + o.w / 2)
+                            const oy = (c.y + c.h / 2) - (o.y + o.h / 2)
+                            const minDx = (c.w + o.w) / 2 + 4
+                            const minDy = (c.h + o.h) / 2 + 4
+                            if (Math.abs(ox) < minDx && Math.abs(oy) < minDy) {
+                                const overlapX = minDx - Math.abs(ox)
+                                const overlapY = minDy - Math.abs(oy)
+                                if (overlapX < overlapY) {
+                                    const sign = ox > 0 ? 1 : -1
+                                    c.x += sign * overlapX / 2; o.x -= sign * overlapX / 2
+                                    const tmp = c.vx; c.vx = o.vx * 0.5; o.vx = tmp * 0.5
+                                } else {
+                                    const sign = oy > 0 ? 1 : -1
+                                    c.y += sign * overlapY / 2; o.y -= sign * overlapY / 2
+                                    const tmp = c.vy; c.vy = o.vy * 0.5; o.vy = tmp * 0.5
+                                }
+                            }
+                        })
+                    }
+
+                    drawChip(c)
+                })
+                requestAnimationFrame(tick)
+            }
+
+            function getChipAt(mx, my) {
+                const pad = 16  // 扩大命中区域
+                for (let i = chips.length - 1; i >= 0; i--) {
+                    const c = chips[i]
+                    if (mx >= c.x - pad && mx <= c.x + c.w + pad &&
+                        my >= c.y - pad && my <= c.y + c.h + pad) return c
+                }
+                return null
+            }
+
+            // canvas 内坐标系统一用 rect.left/top 转换
+            cvs.addEventListener('mousedown', e => {
+                const rect = cvs.getBoundingClientRect()
+                const mx = e.clientX - rect.left
+                const my = e.clientY - rect.top
+                const c = getChipAt(mx, my)
+                if (c) {
+                    dragging = c
+                    c.vx = 0; c.vy = 0
+                    c.dragOx = mx - c.x
+                    c.dragOy = my - c.y
+                    e.preventDefault()
+                }
+            })
+
+            window.addEventListener('mousemove', e => {
+                const rect = cvs.getBoundingClientRect()
+                const mx = e.clientX - rect.left
+                const my = e.clientY - rect.top
+                if (dragging) {
+                    dragging.x = mx - dragging.dragOx
+                    dragging.y = my - dragging.dragOy
+                } else {
+                    const prev = hovered
+                    hovered = getChipAt(mx, my)
+                    if (hovered !== prev) {
+                        if (hovered) {
+                            pointer.current_target = {
+                                getBoundingClientRect: () => {
+                                    const r = cvs.getBoundingClientRect()
+                                    return {
+                                        left: r.left + hovered.x,
+                                        top: r.top + hovered.y,
+                                        width: hovered.w,
+                                        height: hovered.h
+                                    }
+                                }
+                            }
+                            pointer.target.w = hovered.w + 32
+                            pointer.target.h = hovered.h + 32
+                        } else {
+                            pointer.setTarget(null)
+                        }
+                    }
+                }
+            })
+
+            window.addEventListener('mouseup', e => {
+                if (!dragging) return
+                dragging.vx = e.movementX * 0.6
+                dragging.vy = e.movementY * 0.6
+                dragging = null
+            })
+
+            cvs.addEventListener('mouseleave', () => {
+                hovered = null
+                pointer.setTarget(null)
+            })
+
+            function resize() {
+                const rect = cvs.getBoundingClientRect()
+                if (rect.width === 0) return
+                cvs.width = Math.round(rect.width)
+                cvs.height = Math.round(rect.height)
+            }
+
+            window.addEventListener('resize', () => {
+                resize()
+                initChips()
+            })
+
+            // 等 layout 稳定后初始化
+            requestAnimationFrame(() => {
+                resize()
+                initChips()
+                tick()
+            })
+        })()
+
+        // ── Scroll reveal ──
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible')
+                    revealObserver.unobserve(entry.target)
+                }
+            })
+        }, { threshold: 0.05 })
+
+        document.querySelectorAll('.about-card, .tech-card, .section-label, .projects-grid').forEach(el => {
+            revealObserver.observe(el)
+        })
+
+        // ── Theme toggle ──
         const themeToggle = document.getElementById('themeToggle');
         const sunIcon = document.getElementById('sunIcon');
         const moonIcon = document.getElementById('moonIcon');
@@ -781,9 +1433,45 @@
         themeToggle.addEventListener('click', () => {
             const theme = html.getAttribute('data-theme');
             const newTheme = theme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateIcon(newTheme);
+
+            // 圆形扩散过渡
+            const rect = themeToggle.getBoundingClientRect()
+            const cx = rect.left + rect.width / 2
+            const cy = rect.top + rect.height / 2
+            const maxR = Math.hypot(
+                Math.max(cx, window.innerWidth - cx),
+                Math.max(cy, window.innerHeight - cy)
+            )
+
+            if (!document.startViewTransition) {
+                // 不支持 View Transition 时直接切换
+                html.setAttribute('data-theme', newTheme)
+                localStorage.setItem('theme', newTheme)
+                updateIcon(newTheme)
+                return
+            }
+
+            // 用 clip-path 圆形扩散
+            const transition = document.startViewTransition(() => {
+                html.setAttribute('data-theme', newTheme)
+                localStorage.setItem('theme', newTheme)
+                updateIcon(newTheme)
+            })
+
+            transition.ready.then(() => {
+                const clipExpand = [
+                    `circle(0px at ${cx}px ${cy}px)`,
+                    `circle(${maxR}px at ${cx}px ${cy}px)`
+                ]
+                document.documentElement.animate(
+                    { clipPath: clipExpand },
+                    {
+                        duration: 500,
+                        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                        pseudoElement: '::view-transition-new(root)'
+                    }
+                )
+            })
         });
 
         function updateIcon(theme) {
